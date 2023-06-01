@@ -5,8 +5,4 @@
       owner: root
       group: root
       mode: 0600
-
-  - name: Restart ssh service
-    service:
-      name: sshd
-      state: started
+    notify: restart sshd
