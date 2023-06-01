@@ -1,7 +1,3 @@
----
-- hosts: webservers
-  become: yes
-  tasks:
   - name: Copy sshd_config file to targets
     copy:
       src: sshd_config
