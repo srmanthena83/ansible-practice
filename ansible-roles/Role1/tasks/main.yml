@@ -1,0 +1,3 @@
+---
+- include: playbooks/httpd.yml
+- include: playbooks/ssh.yml

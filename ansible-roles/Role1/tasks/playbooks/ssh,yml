@@ -1,0 +1,16 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+  - name: Copy sshd_config file to targets
+    copy:
+      src: sshd_config
+      dest: "{{ sshdconfig  }}"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Restart ssh service
+    service:
+      name: sshd
+      state: started
