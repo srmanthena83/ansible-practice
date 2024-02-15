@@ -16,12 +16,18 @@
         shell: /bin/bash
       become: yes
 
-    - name: Insert new user entry between specified lines in sudoers file
-      blockinfile:
+    - name: Insert new user entry after the first line in sudoers file
+      lineinfile:
         path: "{{ sudoers_file }}"
-        block: |
-          {{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL
+        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
         insertafter: "{{ first_line }}"
+        state: present
+      become: yes
+
+    - name: Move the new user entry before the second line in sudoers file
+      lineinfile:
+        path: "{{ sudoers_file }}"
+        regexp: '^{{ new_username }}'
         insertbefore: "{{ second_line }}"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ new_username }}"
+        state: present
       become: yes
