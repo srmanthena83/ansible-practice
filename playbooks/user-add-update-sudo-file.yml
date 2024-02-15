@@ -1,6 +1,6 @@
 ---
 - name: Create user and grant sudo access as root
-  hosts: your_target_host
+  hosts: 192.168.56.12
   become: yes
   vars:
     new_username: sree
