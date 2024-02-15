@@ -1,27 +1,25 @@
 ---
-- name: Create user and grant sudo access as root
+- name: Append new line in sudoers file with empty lines before and after
   hosts: 192.168.56.12
   become: yes
-  vars:
-    new_username: sree
-    first_line: 'ansibleid'
-    second_line: '## Allows members of the'
-    sudoers_file: '/etc/sudoers'
   tasks:
-    - name: Ensure the user is created
-      user:
-        name: "{{ new_username }}"
-        state: present
-        createhome: yes
-        shell: /bin/bash
+    - name: Add empty line before the new line in sudoers file
+      lineinfile:
+        path: /etc/sudoers
+        line: ''
+        insertafter: EOF
       become: yes
 
-    - name: Insert new user entry between specified lines in sudoers file
+    - name: Append new line in sudoers file
       lineinfile:
-        path: "{{ sudoers_file }}"
-        line: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
-        insertafter: "{{ first_line }}"
-        insertbefore: "{{ second_line }}"
-        validate: 'visudo -cf %s'
-        state: present
+        path: /etc/sudoers
+        line: "sree ALL=(ALL) NOPASSWD:ALL"
+        insertafter: EOF
+      become: yes
+
+    - name: Add empty line after the new line in sudoers file
+      lineinfile:
+        path: /etc/sudoers
+        line: ''
+        insertafter: "sree ALL=(ALL) NOPASSWD:ALL"
       become: yes
