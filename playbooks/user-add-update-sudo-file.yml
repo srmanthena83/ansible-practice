@@ -7,14 +7,14 @@
       lineinfile:
         path: /etc/sudoers
         line: ''
-        insertafter: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
+        insertafter: "ansibleid "
       become: yes
 
     - name: Insert new line in sudoers file
       lineinfile:
         path: /etc/sudoers
         line: "sree ALL=(ALL) NOPASSWD:ALL"
-        insertafter: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
+        insertafter: "ansibleid "
       become: yes
 
     - name: Add empty line after the new line in sudoers file
