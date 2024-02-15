@@ -1,0 +1,26 @@
+---
+- name: Create user and grant sudo access as root
+  hosts: your_target_host
+  become: yes
+  vars:
+    new_username: sree
+  tasks:
+    - name: Ensure the user is created
+      user:
+        name: "{{ new_username }}"
+        state: present
+        createhome: yes
+        shell: /bin/bash
+      become: yes
+
+    - name: Add user to sudoers file with root privileges
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        before: 'root    ALL=(ALL)       ALL'
+        after: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+        state: present
+        backup: yes
+      become: yes
+      become_method: sudo
