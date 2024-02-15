@@ -1,5 +1,5 @@
 ---
-- name: Append new line in sudoers file with empty lines before and after
+- name: Insert new line between two specific lines with one empty line
   hosts: 192.168.56.12
   become: yes
   tasks:
@@ -7,14 +7,14 @@
       lineinfile:
         path: /etc/sudoers
         line: ''
-        insertafter: EOF
+        insertafter: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
       become: yes
 
-    - name: Append new line in sudoers file
+    - name: Insert new line in sudoers file
       lineinfile:
         path: /etc/sudoers
         line: "sree ALL=(ALL) NOPASSWD:ALL"
-        insertafter: EOF
+        insertafter: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
       become: yes
 
     - name: Add empty line after the new line in sudoers file
@@ -23,3 +23,4 @@
         line: ''
         insertafter: "sree ALL=(ALL) NOPASSWD:ALL"
       become: yes
+
