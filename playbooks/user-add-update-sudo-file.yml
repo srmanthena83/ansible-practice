@@ -15,14 +15,14 @@
 
     - name: Ensure comment line above awscnadmin entry
       lineinfile:
-        path: /etc/sudoers.d/
+        path: /etc/sudoers
         insertafter: EOF
         line: "# user rules for awscnadmin netgroup"
       become: yes
 
     - name: Insert awscnadmin entry below awsadmin and before service-now intake discovery
       lineinfile:
-        path: /etc/sudoers.d/
+        path: /etc/sudoers
         insertafter: EOF
         line: "+awscnadmin ALL=(ALL:ALL) ALL"
       become: yes
