@@ -1,26 +1,43 @@
 ---
-- name: Create user and grant sudo access as root
-  hosts: 192.168.56.12
-  become: yes
-  vars:
-    new_username: sree
+- name: Update China servers and manage sudo permissions
+  hosts: all
+  become: yes  # Indicate that we need root privileges to execute tasks
+
   tasks:
-    - name: Ensure the user is created
+    - name: Create awscnadmin user
       user:
-        name: "{{ new_username }}"
+        name: awscnadmin
         state: present
-        createhome: yes
-        shell: /bin/bash
+
+    # - name: Make sudoers.d/hilton-users mutable
+    #   command: chattr -i /etc/sudoers.d/hilton-users
+    #   become: yes
+
+    - name: Ensure comment line above awscnadmin entry
+      lineinfile:
+        path: /etc/sudoers.d/
+        insertafter: EOF
+        line: "# user rules for awscnadmin netgroup"
       become: yes
 
-    - name: Add user to sudoers file with root privileges
+    - name: Insert awscnadmin entry below awsadmin and before service-now intake discovery
       lineinfile:
-        dest: /etc/sudoers
-        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
-        insertbefore: '####Local-Users#####'
-        insertafter: 'ansibleid'
-        validate: 'visudo -cf %s'
-        state: present
-        backup: yes
+        path: /etc/sudoers.d/
+        insertafter: EOF
+        line: "+awscnadmin ALL=(ALL:ALL) ALL"
       become: yes
-      become_method: sudo
+
+    # - name: Make sudoers.d/hilton-users immutable
+    #   command: chattr +i /etc/sudoers.d/hilton-users
+    #   become: yes
+
+    # - name: Make access.netgroup.conf mutable
+    #   command: chattr -i /etc/security/access.netgroup.conf
+    #   become: yes
+
+    # - name: Ensure correct line in access.netgroup.conf
+    #   lineinfile:
+    #     path: /etc/security/access.netgroup.conf
+    #     insertafter: "^\\+ : @nttunixawsadmins: ALL$"
+    #     line: "+ : @nttunixawscnadmins : ALL"
+    #   become: yes
