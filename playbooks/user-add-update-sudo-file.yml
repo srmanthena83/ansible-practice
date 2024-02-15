@@ -17,8 +17,8 @@
       lineinfile:
         dest: /etc/sudoers
         line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
-        before: 'root    ALL=(ALL)       ALL'
-        after: 'ansibleid ALL=(ALL)     NOPASSWD: ALL'
+        before: '####Local-Users#####'
+        after: 'ansibleid'
         validate: 'visudo -cf %s'
         state: present
         backup: yes
