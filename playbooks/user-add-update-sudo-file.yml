@@ -28,7 +28,7 @@
       lineinfile:
         path: "{{ sudoers_file }}"
         insertafter: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
-        line: '|'
+        line: ' '
         state: present
       become: yes
 
