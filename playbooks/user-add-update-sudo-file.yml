@@ -14,7 +14,7 @@
         shell: /bin/bash
       become: yes
 
-    - name: Add new user entry with one empty line before the block starts in sudoers file
+    - name: Add new user entry with empty lines before and after the block starts in sudoers file
       blockinfile:
         path: "{{ sudoers_file }}"
         marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ new_username }}"
@@ -22,5 +22,8 @@
           sree ALL=(ALL) NOPASSWD:ALL
         insertafter: '####Local-Users#####'
         insertbefore: 'sree ALL=(ALL) NOPASSWD:ALL'
+        before_block: |
+          ''
+        after_block: |
+          ''
       become: yes
-
