@@ -1,0 +1,17 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Install the httpd package
+      yum: name=httpd state=absent
+    - name: Copy the httpd.conf file
+      copy: src=httpd_original dest=/etc/httpd/httpd.conf
+    - name: Copy the index.html file
+      copy: src=index.html dest=/var/www/html
+      notify:
+       - restart httpd
+    - name: start and Enable the service
+      service: name=httpd state=restarted enabled=yes
+  handlers:
+    - name: restart httpd
+      service: name=httpd state=restarted

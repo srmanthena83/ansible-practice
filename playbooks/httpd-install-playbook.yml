@@ -1,0 +1,12 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: This is to install httpd package
+      yum:
+       name: httpd
+       state: absent
+    - name: This is to start the service
+      service:
+       name: httpd
+       state: started

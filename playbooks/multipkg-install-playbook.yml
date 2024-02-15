@@ -1,0 +1,11 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+    - name: Install multiple packages
+      yum:
+       name: "{{ item }}"
+       state: absent
+      with_items:
+        - wget
+        - httpd
