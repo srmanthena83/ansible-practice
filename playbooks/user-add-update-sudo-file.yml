@@ -5,7 +5,7 @@
   vars:
     new_username: sree
     first_line: 'ansibleid'
-    second_line: '## Allows members of the 'sys''
+    second_line: '## Allows members of the'
     sudoers_file: '/etc/sudoers'
   tasks:
     - name: Ensure the user is created
