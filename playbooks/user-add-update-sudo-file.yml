@@ -17,11 +17,11 @@
       become: yes
 
     - name: Insert new user entry between specified lines in sudoers file
-      lineinfile:
+      blockinfile:
         path: "{{ sudoers_file }}"
-        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        block: |
+          {{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL
         insertafter: "{{ first_line }}"
         insertbefore: "{{ second_line }}"
-        validate: 'visudo -cf %s'
-        state: present
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ new_username }}"
       become: yes
