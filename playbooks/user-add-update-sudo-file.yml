@@ -4,11 +4,9 @@
   become: yes
   vars:
     new_username: sree
-
     first_line: '####Local-Users#####'
     second_line: 'ansibleid'
     sudoers_file: '/etc/sudoers'
-    temp_file: '/tmp/temp_sudoers'
   tasks:
     - name: Ensure the user is created
       user:
@@ -18,25 +16,12 @@
         shell: /bin/bash
       become: yes
 
-    - name: Create temporary sudoers file with new user entry
-      copy:
-        content: |
-          {{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL
-        dest: "{{ temp_file }}"
-      become: yes
-
     - name: Insert new user entry between specified lines in sudoers file
-      blockinfile:
+      lineinfile:
         path: "{{ sudoers_file }}"
-        block: |
-          # BEGIN ANSIBLE MANAGED BLOCK
-          # These lines are managed by Ansible
-          {{ lookup('file', temp_file) }}
-          # END ANSIBLE MANAGED BLOCK
-      become: yes
-
-    - name: Remove temporary sudoers file
-      file:
-        path: "{{ temp_file }}"
-        state: absent
+        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        insertafter: "{{ first_line }}"
+        insertbefore: "{{ second_line }}"
+        validate: 'visudo -cf %s'
+        state: present
       become: yes
