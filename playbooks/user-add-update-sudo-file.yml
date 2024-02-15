@@ -5,7 +5,7 @@
   vars:
     new_username: sree
     first_line: '####Local-Users#####'
-    second_line: 'ansibleid'
+    second_line: '## Allows members'
     sudoers_file: '/etc/sudoers'
   tasks:
     - name: Ensure the user is created
@@ -23,6 +23,15 @@
         insertafter: "{{ first_line }}"
         state: present
       become: yes
+
+    - name: Add an extra line after the new user's entry
+      lineinfile:
+        path: "{{ sudoers_file }}"
+        line: ''
+        insertafter: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        state: present
+      become: yes
+      
 
     - name: Move the new user entry before the second line in sudoers file
       lineinfile:
