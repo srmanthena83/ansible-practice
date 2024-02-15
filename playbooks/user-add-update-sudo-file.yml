@@ -1,11 +1,9 @@
 ---
 - name: Create user and grant sudo access as root
-  hosts: 192.168.56.12
+  hosts: your_target_host
   become: yes
   vars:
     new_username: sree
-    first_line: '####Local-Users#####'
-    second_line: '## Allows members'
     sudoers_file: '/etc/sudoers'
   tasks:
     - name: Ensure the user is created
@@ -16,26 +14,11 @@
         shell: /bin/bash
       become: yes
 
-    - name: Insert new user entry after the first line in sudoers file
-      lineinfile:
+    - name: Add new user entry with one empty line below '####Local-Users#####' in sudoers file
+      blockinfile:
         path: "{{ sudoers_file }}"
-        insertafter: "{{ first_line }}"
-        line: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
-        state: present
-      become: yes
-
-    - name: Add an extra line after the new user's entry
-      lineinfile:
-        path: "{{ sudoers_file }}"
-        insertafter: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
-        line: ' '
-        state: present
-      become: yes
-
-    - name: Move the new user entry before the second line in sudoers file
-      lineinfile:
-        path: "{{ sudoers_file }}"
-        regexp: '^{{ new_username }}'
-        insertbefore: "{{ second_line }}"
-        state: present
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ new_username }}"
+        block: |
+          sree ALL=(ALL) NOPASSWD:ALL
+        insertafter: '####Local-Users#####'
       become: yes
