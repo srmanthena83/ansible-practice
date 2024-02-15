@@ -1,43 +1,37 @@
 ---
-- name: Update China servers and manage sudo permissions
-  hosts: all
-  become: yes  # Indicate that we need root privileges to execute tasks
-
+- name: Create user and grant sudo access as root
+  hosts: your_target_host
+  become: yes
+  vars:
+    new_username: sree
+    first_line: '####Local-Users#####'
+    second_line: '## Allows members of'
   tasks:
-    - name: Create awscnadmin user
+    - name: Ensure the user is created
       user:
-        name: awscnadmin
+        name: "{{ new_username }}"
         state: present
-
-    # - name: Make sudoers.d/hilton-users mutable
-    #   command: chattr -i /etc/sudoers.d/hilton-users
-    #   become: yes
-
-    - name: Ensure comment line above awscnadmin entry
-      lineinfile:
-        path: /etc/sudoers
-        insertafter: EOF
-        line: "# user rules for awscnadmin netgroup"
+        createhome: yes
+        shell: /bin/bash
       become: yes
 
-    - name: Insert awscnadmin entry below awsadmin and before service-now intake discovery
+    - name: Add user to sudoers file with root privileges
       lineinfile:
-        path: /etc/sudoers
-        insertafter: EOF
-        line: "+awscnadmin ALL=(ALL:ALL) ALL"
+        dest: /etc/sudoers
+        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        after: "{{ first_line }}"
+        validate: 'visudo -cf %s'
+        state: present
+        backup: yes
       become: yes
+      become_method: sudo
 
-    # - name: Make sudoers.d/hilton-users immutable
-    #   command: chattr +i /etc/sudoers.d/hilton-users
-    #   become: yes
-
-    # - name: Make access.netgroup.conf mutable
-    #   command: chattr -i /etc/security/access.netgroup.conf
-    #   become: yes
-
-    # - name: Ensure correct line in access.netgroup.conf
-    #   lineinfile:
-    #     path: /etc/security/access.netgroup.conf
-    #     insertafter: "^\\+ : @nttunixawsadmins: ALL$"
-    #     line: "+ : @nttunixawscnadmins : ALL"
-    #   become: yes
+    - name: Move the user entry below the second line
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: '^{{ new_username }}'
+        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        insertafter: "{{ second_line }}"
+        state: present
+      become: yes
+      become_method: sudo
