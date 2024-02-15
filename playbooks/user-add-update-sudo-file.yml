@@ -19,16 +19,16 @@
     - name: Insert new user entry after the first line in sudoers file
       lineinfile:
         path: "{{ sudoers_file }}"
-        line: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
         insertafter: "{{ first_line }}"
+        line: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
         state: present
       become: yes
 
     - name: Add an extra line after the new user's entry
       lineinfile:
         path: "{{ sudoers_file }}"
-        line: ' '
-        insertafter: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        insertafter: "{{ new_username }} ALL=(ALL) NOPASSWD:ALL"
+        line: '|'
         state: present
       become: yes
 
