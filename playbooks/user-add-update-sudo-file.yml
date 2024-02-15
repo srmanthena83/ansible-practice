@@ -24,13 +24,13 @@
         state: present
       become: yes
 
-    - name: Ensure there's an empty line after the new user's entry
-      replace:
+    - name: Add an extra line after the new user's entry
+      lineinfile:
         path: "{{ sudoers_file }}"
-        regexp: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL\n"
-        replace: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL\n\n"
+        line: ' '
+        insertafter: "{{ new_username }} ALL=(ALL:ALL) NOPASSWD:ALL"
+        state: present
       become: yes
-      
 
     - name: Move the new user entry before the second line in sudoers file
       lineinfile:
